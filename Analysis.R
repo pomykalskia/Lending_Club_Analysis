@@ -1,10 +1,5 @@
 ## STAT6021 final project
 ## do you get a loan or not?
-
-#   Hampton Leonard, hll4ce
-#   Tyler Worthington, tjw4ry
-#   Andrew Pomykalski, ajp5sb
-#   Tianye Song, ts7fx
 library(readr)
 library(plyr)
 library(MASS)
@@ -14,7 +9,7 @@ library(car)
 setwd("~/Downloads")
 
 
-declined <- read_csv('RejectStatsD.csv', skip = 1) # skip the first line where there's a note. 
+declined <- read_csv('RejectStatsD.csv', skip = 1) # skip the first line where there's a note.
 head(declined)
 # proportion of missing values
 sum(is.na(declined$Risk_Score)) / nrow(declined) # 82.15%
@@ -23,49 +18,45 @@ sum(is.na(declined$`Loan Title`)) / nrow(declined) # none missing
 sum(is.na(declined$`Debt-To-Income Ratio`)) / nrow(declined) # none missing
 sum(is.na(declined$State)) / nrow(declined) # none missing
 
-# 1. we have to deal with missing data in risk_score, 
-#   a. get rid of the col
-#   b. treat missing value
-#   c. do both, and compare results. 
-
 
 # read the accepted dataset
-accepted <- read_csv('LoanStats3d.csv', skip = 1) # skip the first line where there's a note. 
+accepted <- read_csv('LoanStats3d.csv', skip = 1) # skip the first line where there's a note.
 
 
-# inspect accepted dataset 
+# inspect accepted dataset
 # what is the intersection of attributes for these two datasets?
-# amount requested, loan title, 
+# amount requested, loan title,
 # 1. rename columns
-accepted = rename(accepted, c("loan_amnt"="Amount Requested", "purpose"="Loan Title", "dti" = "Debt-To-Income Ratio", 
-                   "addr_state" = "State", "emp_length" = "Employment Length", "policy_code" = "Policy Code", 
+accepted = rename(accepted, c("loan_amnt"="Amount Requested", "purpose"="Loan Title", "dti" = "Debt-To-Income Ratio",
+                   "addr_state" = "State", "emp_length" = "Employment Length", "policy_code" = "Policy Code",
                    "issue_d" = "Application Date"))
-accepted <- accepted[c("Amount Requested", "Loan Title", "Debt-To-Income Ratio", 
+accepted <- accepted[c("Amount Requested", "Loan Title", "Debt-To-Income Ratio",
                        "State", "Employment Length", "Policy Code", "Application Date")]
-declined <- declined[c("Amount Requested", "Loan Title", "Debt-To-Income Ratio", 
+declined <- declined[c("Amount Requested", "Loan Title", "Debt-To-Income Ratio",
                        "State", "Employment Length", "Policy Code", "Application Date")]
+
 # flag denoting whether loan application was approved.
 accepted$'accepted?' = 1
 declined$'accepted?' = 0
-# re-formatting to prepare for the concatenation. 
+
+# re-formatting to prepare for the concatenation.
 declined$'Debt-To-Income Ratio' <- as.numeric(sub("%", "", declined$'Debt-To-Income Ratio'))
 
 summary(factor(accepted$`Employment Length`))
 summary(factor(declined$`Employment Length`))
 
-
 # dealing with loan title
 summary(factor(accepted$`Loan Title`))
-# car        credit_card   debt_consolidation   educational          home_improvement    house     major_purchase 
-# 3466       102025        250020               1                    25293               1438      7449 
-# medical    moving        other                renewable_energy     small_business      vacation  wedding 
-# 3938       2420          19204                224                  3364                2249      4 
-# NA's 
-# 2 
+# car        credit_card   debt_consolidation   educational          home_improvement    house     major_purchase
+# 3466       102025        250020               1                    25293               1438      7449
+# medical    moving        other                renewable_energy     small_business      vacation  wedding
+# 3938       2420          19204                224                  3364                2249      4
+# NA's
+# 2
 summary(factor(declined$`Loan Title`))
 
 
-#' substitute a value in the loan title column of a dataframe to be another value of input. 
+#' substitute a value in the loan title column of a dataframe to be another value of input.
 #' @param df, The data we are querying (data.frame)
 #' @param initial, The value we are re-computing for (character)
 #' @param target, The substitution value (character)
@@ -74,7 +65,7 @@ revalue <- function(df, initial, target){
   df[df$'Loan Title' == initial,]$'Loan Title' = target
   return(df)
 }
-# massive renaming and cleaning. 
+# massive renaming and cleaning.
 declined <- revalue(declined, 'smmoore2', 'other')
 declined <- revalue(declined, 'thad31', 'other')
 declined <- revalue(declined, 'loan', 'other')
@@ -103,7 +94,7 @@ declined <- revalue(declined, 'Home buying', 'house')
 declined <- revalue(declined, 'Major purchase', 'major_purchase')
 declined <- revalue(declined, 'Medical expenses', 'medical')
 
-# now do the application date roundings into quarters. 
+# now do the application date roundings into quarters.
 class(declined$`Application Date`)
 class(accepted$`Application Date`)
 dates <- as.Date("Dec/2015", "%b/%Y")
@@ -114,7 +105,7 @@ declined$`Application Date` <- as.yearqtr(declined$`Application Date`, "%Y-%m-%d
 # dropping missing values.
 accepted <- accepted[!is.na(accepted$`Application Date`),]
 
-# concatenation of the two dataframes. 
+# concatenation of the two dataframes.
 loan <- rbind(accepted, declined)
 colnames(loan) <- c('amt_request', 'title', 'dti', 'state', 'emp_length', 'pol_code', 'date', 'result')
 loan[loan$title == 'educational',]$title = 'other'
@@ -127,10 +118,11 @@ loan$title <- relevel(loan$title, "other")
 loan$emp_length <- relevel(loan$emp_length, "n/a")
 
 # logistic regression building
-log.fit = glm(result ~ ., data = loan, family="binomial")
+log.fit = glm(result ~ ., data = loan, family="binomial")#state insignificant
 summary(log.fit)
-log.fit.2 = glm(result ~ .-state, data = loan, family="binomial")
+log.fit.2 = glm(result ~ .-state, data = loan, family="binomial")#state and date insignificant 
 
+#final model
 log.fit.3 = glm(result ~ .-state -date -pol_code, data = loan, family="binomial")
 summary(log.fit.3)
 
@@ -154,9 +146,9 @@ summary(factor(loan$title))
 
 # odds ratios
 require(MASS)
-exp(cbind(coef(log.fit.3), confint(log.fit.3))) 
+exp(cbind(coef(log.fit.3), confint(log.fit.3)))
 exp(coef(log.fit.3))
-#testing on 2016 
+#testing on 2016
 
 
 
@@ -164,10 +156,3 @@ exp(coef(log.fit.3))
 
 
 # ROC curves
-
-
-
-
-
-
-
