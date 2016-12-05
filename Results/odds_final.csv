@@ -1,0 +1,26 @@
+Variable , Odds Ratio
+(Intercept) ,0.19298654
+Amount Requested ,0.99998683
+Reason: Car ,0.60459668
+Reason: Credit Card ,3.19925259
+Reason: Debt Consolidation ,2.80973627
+Reason: Home Improvement ,1.79303512
+Reason: House ,0.72041909
+Reason: Major Purchase ,1.30708
+Reason: Medical* ,0.99311715
+Reason: Moving ,0.85507478
+Reason: Renewable Energy ,0.56107948
+Reason: Small Business ,0.40410612
+Reason Vacation* ,1.01682234
+Debt to Income Ratio ,0.99402487
+Length of Employment: < 1 year ,0.04757782
+Length of Employment: 1 year ,6.8136283
+Length of Employment: 2 years ,7.11588774
+Length of Employment: 3 years ,7.00840493
+Length of Employment: 4 years ,7.23967976
+Length of Employment: 5 years ,0.42614406
+Length of Employment: 6 years ,7.22251703
+Length of Employment: 7 years ,8.18558167
+Length of Employment: 8 years ,8.65973331
+Length of Employment: 9 years ,10.00940157
+Length of Employment: 10+ years ,8.49944838
