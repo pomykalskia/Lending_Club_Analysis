@@ -23,9 +23,9 @@ sum(is.na(dec_16$State)) / nrow(dec_16) # one missing
 acc_16 = rename(acc_16, c("loan_amnt"="Amount Requested", "purpose"="Loan Title", "dti" = "Debt-To-Income Ratio", "addr_state" = "State", "emp_length" = "Employment Length", "policy_code" = "Policy Code", "issue_d" = "Application Date"))
 # select only features that we're interested in. 
 acc_16 <- acc_16[c("Amount Requested", "Loan Title", "Debt-To-Income Ratio", 
-                       "State", "Employment Length", "Policy Code", "Application Date")]
+                   "State", "Employment Length", "Policy Code", "Application Date")]
 dec_16 <- dec_16[c("Amount Requested", "Loan Title", "Debt-To-Income Ratio", 
-                       "State", "Employment Length", "Policy Code", "Application Date")]
+                   "State", "Employment Length", "Policy Code", "Application Date")]
 
 # flag denoting whether loan application was approved.
 acc_16$'accepted?' = 1
@@ -112,5 +112,8 @@ filter <- loan_16[,'title'] == 'wedding' & !is.na(loan_16[,'title'])
 loan_16[filter,]$'title' = 'other'
 
 #### loan_16 is the cleaned, concatenated comprehensive dataset ####
+
+
+
 
 

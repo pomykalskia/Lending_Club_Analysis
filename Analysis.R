@@ -144,15 +144,33 @@ summary(factor(loan$title))
 # Internal estimate of accuracy = 0.936
 # Cross-validation estimate of accuracy = 0.936
 
+
 # odds ratios
-require(MASS)
-exp(cbind(coef(log.fit.3), confint(log.fit.3)))
 exp(coef(log.fit.3))
-#testing on 2016
 
 
 
-#classification rate
+#testing on 2016 
+# Predict loan acceptance using data from Q1, Q2, and Q3 from 2016
+
+predict_loan_16 <- loan_16[c("amt_request", "title", "dti", "state", "emp_length", "pol_code", "date")]
+
+predict1 <- predict(log.fit.3, data =predict_loan_16 , type="response")
 
 
-# ROC curves
+ROC1 <- roc(loan_16$result[1:3280474], predict1)
+plot(ROC1, col = "blue", main = "ROC Curve")
+
+
+# Confusion matrix
+
+predict1final <- as.data.frame(predict1)
+
+# chose cut-off probability score of 50% to determine whether response was a 0 or 1
+predict1final$predict1[predict1final$predict1 < .5] <- 0
+predict1final$predict1[predict1final$predict1 > .5] <- 1
+
+conf <- confusionMatrix(predict1final$predict1, loan_16$result[1:3280474])
+conf
+
+
