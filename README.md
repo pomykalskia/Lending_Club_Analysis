@@ -4,7 +4,13 @@ Analyze over 3 million loan requests to find out what makes a successful request
 
 #Data
 
-Over 3 million loan requests in the year 2015. All data is obtained from Lending Club a peer-to-peer lending company, headquartered in San Francisco, California. Features include:Amount Requested, Reason for Request, Debt-To-Income Ratio, Employment Length, Location of Request, and Date of Request
+Over 3 million loan requests in the year 2015. All data is obtained from Lending Club a peer-to-peer lending company, headquartered in San Francisco, California. Features include:
+* Amount Requested
+* Reason for Request
+* Debt-To-Income Ratio
+* Employment Length
+* Location of Request
+* Date of Request
 
 
 #Methodology
